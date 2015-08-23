@@ -33,3 +33,5 @@ proguard/
 
 # Log Files
 *.log
+
+api-keys.xml

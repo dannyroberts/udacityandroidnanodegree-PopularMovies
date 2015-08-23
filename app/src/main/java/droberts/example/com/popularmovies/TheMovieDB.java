@@ -18,10 +18,15 @@ public class TheMovieDB {
             return mString;
         }
     }
+    private String mApiKey;
     /*
      * imageName should begin with a '/'
      */
     public static String getImageUrl(String imageName, ImageSize imageSize) {
         return BASE_URL + imageSize.toString() + imageName;
+    }
+
+    public TheMovieDB(String apiKey) {
+        mApiKey = apiKey;
     }
 }
