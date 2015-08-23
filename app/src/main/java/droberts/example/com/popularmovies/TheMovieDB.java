@@ -1,7 +1,20 @@
 package droberts.example.com.popularmovies;
 
+import android.net.Uri;
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 public class TheMovieDB {
-    private static final String BASE_URL = "http://image.tmdb.org/t/p/";
+    private static final String LOG_TAG = TheMovieDB.class.getSimpleName();
+    private static final String IMAGE_URL_BASE = "http://image.tmdb.org/t/p/";
+    private static final String API_URL_BASE = "http://api.themoviedb.org/3/";
+    private static final String ENDPOINT_DISCOVER_MOVIE = "discover/movie";
+
     public enum ImageSize {
         w92 ("w92"),
         w154 ("w154"),
@@ -22,11 +35,67 @@ public class TheMovieDB {
     /*
      * imageName should begin with a '/'
      */
-    public static String getImageUrl(String imageName, ImageSize imageSize) {
-        return BASE_URL + imageSize.toString() + imageName;
+    protected static String getImageUrl(String imageName, ImageSize imageSize) {
+        return IMAGE_URL_BASE + imageSize.toString() + imageName;
     }
 
     public TheMovieDB(String apiKey) {
         mApiKey = apiKey;
+    }
+
+
+    public static class MovieInfo {
+        public final String poster_path;
+        public final String original_title;
+        public MovieInfo(String poster_path, String original_title) {
+            this.poster_path = poster_path;
+            this.original_title = original_title;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj.getClass() != getClass()) {
+                return false;
+            }
+            MovieInfo rhs = (MovieInfo) obj;
+            return poster_path.equals(rhs.poster_path) && original_title.equals(rhs.original_title);
+        }
+        public String toString() {
+            return "new MovieInfo(\"" + poster_path + "\", \"" + original_title + "\")";
+        }
+    }
+    public static ArrayList<MovieInfo> parseDiscoverMoviesJson(JSONObject discoverMoviesJson) {
+        ArrayList<MovieInfo> movieInfos = new ArrayList<>();
+        try {
+            JSONArray results = discoverMoviesJson.getJSONArray("results");
+            for (int i = 0; i < results.length(); i++) {
+                JSONObject movieInfoJson = results.getJSONObject(i);
+                movieInfos.add(new MovieInfo(movieInfoJson.getString("poster_path"),
+                        movieInfoJson.getString("original_title")));
+            }
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, ENDPOINT_DISCOVER_MOVIE + " discoverMoviesJson not expected format: \n" + discoverMoviesJson.toString());
+            return null;
+        }
+        return movieInfos;
+    }
+
+    public ArrayList<MovieInfo> discoverMovies() {
+        Uri uri = Uri.parse(API_URL_BASE + ENDPOINT_DISCOVER_MOVIE).buildUpon()
+                .appendQueryParameter("api_key", mApiKey).build();
+        Requests.Response response = Requests.get(uri.toString());
+        if (response == null) {
+            return null;
+        }
+        JSONObject discoverMoviesJson;
+        try {
+            discoverMoviesJson = response.json();
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, ENDPOINT_DISCOVER_MOVIE + " came back with invalid JSON: \n"
+                    + response.text);
+            return null;
+        }
+
+        return parseDiscoverMoviesJson(discoverMoviesJson);
     }
 }
