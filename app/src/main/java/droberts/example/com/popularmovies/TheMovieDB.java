@@ -52,9 +52,16 @@ public class TheMovieDB {
     public static class MovieInfo implements Serializable {
         public final String poster_path;
         public final String original_title;
-        public MovieInfo(String poster_path, String original_title) {
+        public final String release_date;
+        public final double vote_average;
+        public final String overview;
+        public MovieInfo(String poster_path, String original_title, String release_date,
+                         double vote_average, String overview) {
             this.poster_path = poster_path;
             this.original_title = original_title;
+            this.release_date = release_date;
+            this.vote_average = vote_average;
+            this.overview = overview;
         }
 
         @Override
@@ -63,10 +70,19 @@ public class TheMovieDB {
                 return false;
             }
             MovieInfo rhs = (MovieInfo) obj;
-            return poster_path.equals(rhs.poster_path) && original_title.equals(rhs.original_title);
+            return poster_path.equals(rhs.poster_path)
+                    && original_title.equals(rhs.original_title)
+                    && release_date.equals(rhs.release_date)
+                    && vote_average == rhs.vote_average
+                    && overview.equals(rhs.overview);
         }
         public String toString() {
-            return "new MovieInfo(\"" + poster_path + "\", \"" + original_title + "\")";
+            return "new MovieInfo(\"" + poster_path +
+                    "\", \"" + original_title +
+                    "\", \"" + release_date +
+                    "\", " + vote_average +
+                    ", \"" + overview +
+                    "\")";
         }
     }
     public static ArrayList<MovieInfo> parseDiscoverMoviesJson(JSONObject discoverMoviesJson) {
@@ -75,8 +91,13 @@ public class TheMovieDB {
             JSONArray results = discoverMoviesJson.getJSONArray("results");
             for (int i = 0; i < results.length(); i++) {
                 JSONObject movieInfoJson = results.getJSONObject(i);
-                movieInfos.add(new MovieInfo(movieInfoJson.getString("poster_path"),
-                        movieInfoJson.getString("original_title")));
+                movieInfos.add(new MovieInfo(
+                        movieInfoJson.getString("poster_path"),
+                        movieInfoJson.getString("original_title"),
+                        movieInfoJson.getString("release_date"),
+                        movieInfoJson.getDouble("vote_average"),
+                        movieInfoJson.getString("overview")
+                ));
             }
         } catch (JSONException e) {
             Log.e(LOG_TAG, ENDPOINT_DISCOVER_MOVIE + " discoverMoviesJson not expected format: \n" + discoverMoviesJson.toString());
