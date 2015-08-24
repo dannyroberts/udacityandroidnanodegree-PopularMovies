@@ -26,9 +26,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/detail_movie_release_date"
-        android:layout_below="@+id/detail_movie_title"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="72dp" />
+        android:layout_below="@+id/detail_movie_poster"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,8 +35,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/detail_movie_rating"
         android:layout_below="@+id/detail_movie_release_date"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="72dp" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,6 +43,5 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/detail_movie_description"
         android:layout_below="@+id/detail_movie_rating"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="72dp" />
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

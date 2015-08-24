@@ -29,6 +29,9 @@ public class DetailActivityFragment extends Fragment {
                 .load(TheMovieDB.getImageUrl(mMovieInfo.poster_path, TheMovieDB.ImageSize.w500))
                 .placeholder(R.drawable.transparent_poster)
                 .into((ImageView) rootView.findViewById(R.id.detail_movie_poster));
+        ((TextView) rootView.findViewById(R.id.detail_movie_rating)).setText("Rating: " + mMovieInfo.vote_average);
+        ((TextView) rootView.findViewById(R.id.detail_movie_release_date)).setText("Release Date: " + mMovieInfo.release_date);
+        ((TextView) rootView.findViewById(R.id.detail_movie_description)).setText(mMovieInfo.overview);
         return rootView;
     }
 }
