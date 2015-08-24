@@ -1,5 +1,6 @@
 package droberts.example.com.popularmovies;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -56,11 +57,20 @@ public class MainActivityFragment extends Fragment {
         };
         GridView gridView = (GridView) rootView.findViewById(R.id.movies_grid);
         gridView.setAdapter(mMoviesAdapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TheMovieDB.MovieInfo movieInfo = mMoviesAdapter.getItem(position);
+                Intent intent = new Intent(parent.getContext(), DetailActivity.class);
+                intent.putExtra("movie_info", movieInfo);
+                startActivity(intent);
+            }
+        });
 
+        // https://developer.android.com/guide/topics/ui/controls/spinner.html
         Spinner sortSpinner = (Spinner) rootView.findViewById(R.id.spinner_sort);
         ArrayAdapter<CharSequence> sortAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.sort_options, android.R.layout.simple_spinner_item);
-        // https://developer.android.com/guide/topics/ui/controls/spinner.html
         sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sortSpinner.setAdapter(sortAdapter);
         sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

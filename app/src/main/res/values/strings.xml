@@ -5,4 +5,6 @@
         <item>Most Popular</item>
         <item>Highest Rated</item>
     </string-array>
+    <string name="title_activity_detail">DetailActivity</string>
+    <string name="hello_world">Hello world!</string>
 </resources>

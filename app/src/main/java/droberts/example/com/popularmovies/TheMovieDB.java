@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class TheMovieDB {
@@ -48,7 +49,7 @@ public class TheMovieDB {
     }
 
 
-    public static class MovieInfo {
+    public static class MovieInfo implements Serializable {
         public final String poster_path;
         public final String original_title;
         public MovieInfo(String poster_path, String original_title) {
