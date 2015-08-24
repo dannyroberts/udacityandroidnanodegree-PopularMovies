@@ -24,7 +24,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         // thanks to http://sudarmuthu.com/blog/using-arrayadapter-and-listview-in-android-applications/
@@ -36,7 +36,7 @@ public class MainActivityFragment extends Fragment {
                 View view;
                 TheMovieDB.MovieInfo movieInfo = getItem(position);
                 if (null == convertView) {
-                    view = inflater.inflate(R.layout.grid_item_movie, null);
+                    view = inflater.inflate(R.layout.grid_item_movie, container);
                 } else {
                     view = convertView;
                 }
