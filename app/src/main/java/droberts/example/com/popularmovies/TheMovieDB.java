@@ -15,6 +15,10 @@ public class TheMovieDB {
     private static final String API_URL_BASE = "http://api.themoviedb.org/3/";
     private static final String ENDPOINT_DISCOVER_MOVIE = "discover/movie";
 
+    enum SortOption {
+        MOST_POPULAR, HIGHEST_RATED
+    }
+
     public enum ImageSize {
         w92 ("w92"),
         w154 ("w154"),
@@ -80,9 +84,22 @@ public class TheMovieDB {
         return movieInfos;
     }
 
-    public ArrayList<MovieInfo> discoverMovies() {
+    public ArrayList<MovieInfo> discoverMovies(SortOption sort) {
+        String sortByParam;
+        switch (sort) {
+            case HIGHEST_RATED:
+                sortByParam = "vote_average.desc";
+                break;
+            case MOST_POPULAR:
+                sortByParam = "popularity.desc";
+                break;
+            default:
+                throw new AssertionError("This is impossible");
+        }
         Uri uri = Uri.parse(API_URL_BASE + ENDPOINT_DISCOVER_MOVIE).buildUpon()
-                .appendQueryParameter("api_key", mApiKey).build();
+                .appendQueryParameter("api_key", mApiKey)
+                .appendQueryParameter("sort_by", sortByParam)
+                .build();
         Requests.Response response = Requests.get(uri.toString());
         if (response == null) {
             return null;

@@ -6,9 +6,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 import com.squareup.picasso.Picasso;
 
@@ -19,7 +21,11 @@ import java.util.ArrayList;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
+    private static final TheMovieDB.SortOption[] sortOptions = {
+            TheMovieDB.SortOption.MOST_POPULAR, TheMovieDB.SortOption.HIGHEST_RATED};
+    private TheMovieDB.SortOption mSelectedSortOption;
     private ArrayAdapter<TheMovieDB.MovieInfo> mMoviesAdapter;
+
     public MainActivityFragment() {
     }
 
@@ -50,23 +56,51 @@ public class MainActivityFragment extends Fragment {
         };
         GridView gridView = (GridView) rootView.findViewById(R.id.movies_grid);
         gridView.setAdapter(mMoviesAdapter);
+
+        Spinner sortSpinner = (Spinner) rootView.findViewById(R.id.spinner_sort);
+        ArrayAdapter<CharSequence> sortAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.sort_options, android.R.layout.simple_spinner_item);
+        // https://developer.android.com/guide/topics/ui/controls/spinner.html
+        sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortSpinner.setAdapter(sortAdapter);
+        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (mSelectedSortOption != sortOptions[position]) {
+                    mSelectedSortOption = sortOptions[position];
+                    populateMovies();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         return rootView;
+    }
+
+    public void populateMovies() {
+        new LoadMoviesTask().execute();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        new LoadMoviesTask().execute();
+        populateMovies();
     }
 
     private class LoadMoviesTask extends AsyncTask<Void, Void, ArrayList<TheMovieDB.MovieInfo>> {
         @Override
         protected ArrayList<TheMovieDB.MovieInfo> doInBackground(Void... params) {
-            return ((MainActivity) getActivity()).getTheMovieDB().discoverMovies();
+            return ((MainActivity) getActivity()).getTheMovieDB().discoverMovies(
+                    mSelectedSortOption != null ? mSelectedSortOption : TheMovieDB.SortOption.MOST_POPULAR);
         }
 
         @Override
         protected void onPostExecute(ArrayList<TheMovieDB.MovieInfo> movieInfos) {
+            mMoviesAdapter.clear();
             if (movieInfos != null) {
                 for (TheMovieDB.MovieInfo movieInfo : movieInfos) {
                     mMoviesAdapter.add(movieInfo);
